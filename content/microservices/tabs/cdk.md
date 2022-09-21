@@ -11,16 +11,8 @@ hidden: true
 sudo yum -y install jq nodejs python36 siege
 
 <!-- # Install packages
-pip3 install --user --upgrade aws-cdk.core==$AWS_CDK_VERSION \
-aws-cdk.aws_ecs_patterns==$AWS_CDK_VERSION \
-aws-cdk.aws_ec2==$AWS_CDK_VERSION \
-aws-cdk.aws_ecs==$AWS_CDK_VERSION \
-aws-cdk.aws_servicediscovery==$AWS_CDK_VERSION \
-aws_cdk.aws_iam==$AWS_CDK_VERSION \
-aws_cdk.aws_efs==$AWS_CDK_VERSION \
-aws_cdk.aws_appmesh==$AWS_CDK_VERSION \
-awscli \
-awslogs -->
+pip3 install --user --upgrade awscli awslogs 
+-->
 
 # Setting environment variables required to communicate with AWS API's via the cli tools
 echo "export AWS_DEFAULT_REGION=$(curl -s 169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region)" >> ~/.bashrc

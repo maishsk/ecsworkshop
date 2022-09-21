@@ -159,7 +159,6 @@ When the stack is done building, it will print out all of the outputs for the un
 
 Outputs:
 ecsworkshop-base.ECSClusterName = container-demo
-ecsworkshop-base.ECSClusterSecGrp = []
 ecsworkshop-base.FE2BESecGrp = sg-0af0bfe75c1bf29ed
 ecsworkshop-base.NSArn = arn:aws:servicediscovery:us-east-2:1234567890:namespace/ns-eujlcy2hswslrjcy
 ecsworkshop-base.NSId = ns-eujlcy2hswslrjcy

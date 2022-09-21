@@ -147,7 +147,6 @@ class BaseVPCStack(Stack):
         CfnOutput(self, "NSId", value=namespace_outputs['ID'], export_name="NSID")
         CfnOutput(self, "FE2BESecGrp", value=services_3000_sec_group.security_group_id, export_name="SecGrpId")
         CfnOutput(self, "ECSClusterName", value=cluster_outputs['NAME'], export_name="ECSClusterName")
-        CfnOutput(self, "ECSClusterSecGrp", value=cluster_outputs['SECGRPS'], export_name="ECSSecGrpList")
         CfnOutput(self, "ServicesSecGrp", value=services_3000_sec_group.security_group_id, export_name="ServicesSecGrp")
         CfnOutput(self, "StressToolEc2Id",value=instance.instance_id)
         CfnOutput(self, "StressToolEc2Ip",value=instance.instance_private_ip)

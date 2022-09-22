@@ -57,43 +57,43 @@ class BaseVPCStack(Stack):
         super().__init__(scope, construct_id, **kwargs)
 
         # This resource alone will create a private/public subnet in each AZ as well as nat/internet gateway(s)
-        vpc = ec2.Vpc(
+        self.vpc = ec2.Vpc(
             self, "ecs-workshop-vpc",
             cidr='10.0.0.0/24',
         )
 
         # Creating ECS Cluster in the VPC created above
-        ecs_cluster = ecs.Cluster(
+        self.ecs_cluster = ecs.Cluster(
             self, "ECSCluster",
-            vpc=vpc,
+            vpc=self.vpc,
             cluster_name="container-demo",
             container_insights=True
         )
 
         # Adding service discovery namespace to cluster
-        ecs_cluster.add_default_cloud_map_namespace(
+        self.ecs_cluster.add_default_cloud_map_namespace(
             name="service.local",
         )
 
         # Namespace details as CFN output
-        namespace_outputs = {
-            'ARN': ecs_cluster.default_cloud_map_namespace.private_dns_namespace_arn,
-            'NAME': ecs_cluster.default_cloud_map_namespace.private_dns_namespace_name,
-            'ID': ecs_cluster.default_cloud_map_namespace.private_dns_namespace_id,
+        self.namespace_outputs = {
+            'ARN': self.ecs_cluster.default_cloud_map_namespace.private_dns_namespace_arn,
+            'NAME': self.ecs_cluster.default_cloud_map_namespace.private_dns_namespace_name,
+            'ID': self.ecs_cluster.default_cloud_map_namespace.private_dns_namespace_id,
         }
         
         # Cluster Attributes
-        cluster_outputs = {
-            'NAME': ecs_cluster.cluster_name,
-            'SECGRPS': str(ecs_cluster.connections.security_groups)
+        self.cluster_outputs = {
+            'NAME': self.ecs_cluster.cluster_name,
+            'SECGRPS': str(self.ecs_cluster.connections.security_groups)
         }
         
         # When enabling EC2, we need the security groups "registered" to the cluster for imports in other service stacks
-        if ecs_cluster.connections.security_groups:
-            cluster_outputs['SECGRPS'] = str([x.security_group_id for x in ecs_cluster.connections.security_groups][0])
+        if self.ecs_cluster.connections.security_groups:
+            cluster_outputs['SECGRPS'] = str([x.security_group_id for x in self.ecs_cluster.connections.security_groups][0])
         
         # Frontend service to backend services on 3000
-        services_3000_sec_group = ec2.SecurityGroup(
+        self.services_3000_sec_group = ec2.SecurityGroup(
             self, "FrontendToBackendSecurityGroup",
             allow_all_outbound=True,
             description="Security group for frontend service to talk to backend services",
@@ -101,17 +101,17 @@ class BaseVPCStack(Stack):
         )
         
         # Allow inbound 3000 from ALB to Frontend Service
-        sec_grp_ingress_self_3000 = ec2.CfnSecurityGroupIngress(
+        self.sec_grp_ingress_self_3000 = ec2.CfnSecurityGroupIngress(
             self, "InboundSecGrp3000",
             ip_protocol='TCP',
-            source_security_group_id=services_3000_sec_group.security_group_id,
+            source_security_group_id=self.services_3000_sec_group.security_group_id,
             from_port=3000,
             to_port=3000,
-            group_id=services_3000_sec_group.security_group_id
+            group_id=self.services_3000_sec_group.security_group_id
         )
         
         # Creating an EC2 bastion host to perform load test on private backend services
-        amzn_linux = ec2.MachineImage.latest_amazon_linux(
+        self.amzn_linux = ec2.MachineImage.latest_amazon_linux(
             generation=ec2.AmazonLinuxGeneration.AMAZON_LINUX_2,
             edition=ec2.AmazonLinuxEdition.STANDARD,
             virtualization=ec2.AmazonLinuxVirt.HVM,
@@ -130,7 +130,7 @@ class BaseVPCStack(Stack):
             user_data = f.read()
 
         # Instance creation
-        instance = ec2.Instance(
+        self.instance = ec2.Instance(
             self, "Instance",
             instance_name="{}-stresstool".format(stack_name),
             instance_type=ec2.InstanceType("t3.medium"),

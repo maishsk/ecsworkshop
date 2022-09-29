@@ -104,7 +104,9 @@ class FrontendService(core.Stack):
             memory_limit_mib=512,
             desired_count=1,
             public_load_balancer=True,
-            cloud_map_options=self.base_platform.sd_namespace,
+            cloud_map_options=ecs.CloudMapOptions(
+                cloud_map_namespace=self.base_platform.sd_namespace
+                ),
             task_image_options=self.fargate_task_image
         )
 
@@ -139,10 +141,10 @@ awslogs get -G -S --timestamp --start 1m --watch $log_group
 {{%expand "Expand here to see the solution" %}}
 
 - First, we will navigate to ECS in the console and drill down into our service to get detailed information. As you can see, there is a lot of information that we can gather around the service itself, such as Load Balancer details, number of tasks running, as well as logs. Click the logs tab to review the logs for the running service.
-  ![Console2ServiceLogs](/images/ecs-console-service-logs.gif)
+  ![Console2ServiceLogs](/images/ecs-console-service-logs2.gif)
 
-- Next, we can review our service logs in near real time. You can go back in time as far as one week, or drill down to the past 30 seconds. In the example below, we select 30 seconds.
-  ![ConsoleServiceLogs](/images/ecs-console-logs.gif)
+- Next, we can review our service logs in near real time. You can go back in time as far as one week, or drill down to the past 10 minutes. In the example below, we select 10 minutes seconds.
+  ![ConsoleServiceLogs](/images/ecs-console-logs2.gif)
 
 {{% /expand %}}
 
@@ -163,7 +165,9 @@ self.fargate_load_balanced_service = aws_ecs_patterns.ApplicationLoadBalancedFar
     desired_count=3,
     #desired_count=1,
     public_load_balancer=True,
-    cloud_map_options=self.base_platform.sd_namespace,
+    cloud_map_options=ecs.CloudMapOptions(
+        cloud_map_namespace=self.base_platform.sd_namespace
+        ),
     task_image_options=self.fargate_task_image
 )
 ```
